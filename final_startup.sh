@@ -7,8 +7,8 @@ if [ -n "$GITHUB_TOKEN" ]; then
   echo "Using GitHub token auth"
 fi
 
-# Start nginx immediately so health check passes
-nginx &
+# Start cloning repos in background subshell
+(
 
 echo "Cloning 100percentlockus -> $SITES_DIR/100percentlockus.com"
 git clone --depth 1 "https://${GIT_AUTH}github.com/shlomoholdingsllc-ai/100percentlockus.git" "$SITES_DIR/100percentlockus.com" 2>&1 || echo "FAILED: 100percentlockus"
@@ -4422,5 +4422,5 @@ echo "Cloning visalockus -> $SITES_DIR/visalockus.com"
 git clone --depth 1 "https://${GIT_AUTH}github.com/shlomoholdingsllc-ai/visalockus.git" "$SITES_DIR/visalockus.com" 2>&1 || echo "FAILED: visalockus"
 rm -rf "$SITES_DIR/visalockus.com/.git" 2>/dev/null
 
-# Keep container alive (nginx is already running in background)
-wait
+# Keep container alive with nginx in foreground
+) & exec nginx -g 'daemon off;'
