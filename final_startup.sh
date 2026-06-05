@@ -7,12 +7,13 @@ if [ -n "$GITHUB_TOKEN" ]; then
   echo "Using GitHub token auth"
 fi
 
-# Start cloning repos in background subshell
-(
 # Default landing page
 cat > $SITES_DIR/index.html << 'HTML'
 <html><body><h1>Static Site Hub</h1><p>Lock &amp; Key site consolidation running.</p></body></html>
 HTML
+
+# Clone repos in background subshell
+(
 
 echo "Cloning 100percentlockus -> $SITES_DIR/100percentlockus.com"
 git clone --depth 1 "https://${GIT_AUTH}github.com/shlomoholdingsllc-ai/100percentlockus.git" "$SITES_DIR/100percentlockus.com" 2>&1 || echo "FAILED: 100percentlockus"
@@ -4427,4 +4428,4 @@ git clone --depth 1 "https://${GIT_AUTH}github.com/shlomoholdingsllc-ai/visalock
 rm -rf "$SITES_DIR/visalockus.com/.git" 2>/dev/null
 
 # Keep container alive with nginx in foreground
-) & exec nginx -g 'daemon off;'
+) & nginx -g 'daemon off;'
